@@ -1,0 +1,17 @@
+<?PHP
+session_start();
+if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
+header ("Location: index.php");
+}
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+<img src="http://YOUR.URL/cgi-bin/nph-zms?mode=jpeg&monitor=3&scale=100&maxfps=15&buffer=1000&user=USERNAME&pass=PASSWORD&connkey=914020&rand=1355500785" alt="Edit source in tab3.html to add camera if you got one.">
+    </body>
+</html>

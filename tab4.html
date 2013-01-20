@@ -1,0 +1,180 @@
+<?PHP
+session_start();
+if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
+header ("Location: index.php");
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="css/jqx.base.css" type="text/css" />
+        <script type="text/javascript" src="js/gettheme.js"></script>
+        <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script> 
+        <script type="text/javascript" src="js/jqxcore.js"></script>
+        <script type="text/javascript" src="js/jqxbuttons.js"></script>
+        <script type="text/javascript" src="js/jqxscrollbar.js"></script>
+        <script type="text/javascript" src="js/jqxdata.js"></script>
+        <script type="text/javascript" src="js/jqxlistbox.js"></script>
+        <script type="text/javascript" src="js/jqxdropdownlist.js"></script>	
+        <script type="text/javascript" src="js/jqxcheckbox.js"></script>
+        <script type="text/javascript" src="js/jqxvalidator.js"></script> 
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                
+                $('#sendButton').jqxButton({ width: 60, height: 25, theme: 'classic' });
+                $('#sendButton').bind('click', function () {
+                    var validation =  $('#testForm').jqxValidator('validate');
+                    if (validation == true)
+                    {
+                        var name = $("#userInput").val();               
+                        var password = $("#passwordInput").val();
+                        $.post("changeuser.php", { name: name, password: password});
+                        $('#alert').html("<b>Username and password changed.</b>");
+                    }
+                });
+                $('#testForm').jqxValidator({
+                    rules: [
+                        { input: '#userInput', message: 'Your username must be between 3 and 12 characters!', action: 'keyup', rule: 'length=3,12' },
+                      
+                        { input: '#passwordInput', message: 'Your password must be between 4 and 12 characters!', action: 'keyup', rule: 'length=4,12' },
+                        { input: '#passwordConfirmInput', message: 'Passwords doesn\'t match!', action: 'keyup, focus', rule: function (input) {
+                                if (input.val() === $('#passwordInput').val()) {
+                                    return true;                             
+                                }
+                                return false;
+                            }
+                        },
+                    ], theme: 'classic'
+                });
+                
+
+                // prepare the data
+                var source =
+                    {
+                    datatype: "json",
+                    datafields: [
+                        { name: 'plantnumber'},
+                        { name: 'preset'},
+                        { name: 'minval'},
+                        { name: 'maxval'},
+                        { name: 'plantname'},
+                        { name: 'pump'},
+                        { name: 'wlevel'}
+                    ],
+                    url: 'data_tab_2.php'
+                };
+            
+                var dataAdapter = new $.jqx.dataAdapter(source, {
+                    loadComplete: function () {
+                        // get data records.
+                        records = dataAdapter.records;
+                        // get length, amount of plants/probes, for for loop
+                        var length = records.length;
+                        var theme = getTheme();   
+                        var plantnumber = length-1;    
+                         
+                        var wlevel=records[0].wlevel;
+                        if (wlevel==0)
+                        {checked=false}
+                        else if (wlevel==1){
+                            checked=true
+                        }
+                        
+                        var sourceDropdown = [
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9",
+                            "10",
+                            "11",
+                            "12",
+                            "13",
+                            "14",
+                            "15",
+                            "16",               
+                        ];
+                                               
+                        //create dropdown element
+                        $('#jqxdropdownlist').jqxDropDownList({ source: sourceDropdown, selectedIndex: plantnumber, theme: theme, width: '45px', height: '25px'  });
+                        
+                        // create jqxCheckBox.
+                        $("#wlevel").jqxCheckBox({ width: 120, height: 25, checked: checked });
+                        // bind to change event.
+                        $("#wlevel").bind('change', function (event) {
+                            var plantnumber = 1; 
+                            var checked = $("#wlevel").jqxCheckBox('checked');
+                            if (checked) {
+                                $.post("changeplantsettings.php", { val: "7", plantnumber: plantnumber, wlevel: "1" });
+                            }
+                            else {
+                                $.post("changeplantsettings.php", { val: "7", plantnumber: plantnumber, wlevel: "0" });
+                            }                        
+                        });
+  
+                        //call for dropdown event handler
+                        dropDownHandler();  
+                        
+                        //dropdown list event handler function
+                        function dropDownHandler(){
+                        
+                            $('#jqxdropdownlist').bind('select', function (event) {
+                            
+                                var args = event.args;
+                                if (args) {
+                                    var selectedIndex = args.index;
+                                    var plantnumber = 1+selectedIndex;
+                                }      
+                                $.post("changeplantsettings.php", {val: "4", plantnumber: plantnumber } );                       
+                            });  
+                        };
+                    }
+                        
+                });
+                dataAdapter.dataBind(); 
+            }); 
+            
+        </script>
+
+    </head>
+    <body class='default'>
+        <div><h3>Plant settings</h3></div>
+        How many plants? 
+        <div id='jqxdropdownlist'> </div>  
+        Do we have water level sensor in container?
+        <div id='wlevel'>
+        </div>
+        <div><h3>Change username and password</h3></div>
+        <form id="testForm" action="./">
+            <table class="register-table">
+                <tr>
+                    <td>Username:</td>
+                    <td><input type="text" id="userInput" class="text-input" /></td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td><input type="password" id="passwordInput" class="text-input" /></td>
+                </tr>
+                <tr>
+                    <td>Confirm password:</td>
+                    <td><input type="password" id="passwordConfirmInput" class="text-input" /></td>
+                </tr>
+                <tr>
+                <div id="alert">
+                </div>
+                <td colspan="2" style="text-align: center;">
+                    <input type="button" value="Send" id="sendButton" />
+                </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>

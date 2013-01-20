@@ -1,0 +1,78 @@
+<?PHP
+session_start();
+if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
+header ("Location: index.php");
+}
+?>
+
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Moisture value</title>
+        <link rel="stylesheet" href="css/jqx.base.css" type="text/css" />
+        <link href="css/tabs.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="js/gettheme.js"></script>
+        <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="js/jqxcore.js"></script>
+        <script type="text/javascript" src="js/jqxtabs.js"></script>
+        <script type="text/javascript" src="js/jqxcheckbox.js"></script>
+            
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var theme = getTheme();
+
+                // Create jqxTabs.
+                $('#jqxTabs').jqxTabs({ width: 860, height: 630, theme: theme });
+
+                //load tab1 and make function to load other tabs
+                
+                var loadPage = function (url, tabIndex) {
+                    $.get(url, function (data) {
+                        $('#content' + tabIndex).html(data);
+                    });
+                }
+
+                loadPage('tab1.html', 1);
+                $('#jqxTabs').bind('selected', function (event) {
+                    var pageIndex = event.args.item + 1;
+                    loadPage('tab' + pageIndex + '.html', pageIndex);
+                });
+                
+            });
+
+        </script>
+    </head>
+    <body class=''>
+        <div id='jqxWidget'>
+
+            <div id='jqxTabs'>
+                <ul>
+                    <li style="margin-left: 30px;">Graphs</li>
+                    <li>Plants</li>
+                    <li>Camera</li>
+                    <li>Settings</li>
+                    <li style="float:right!important;"><a href="logout.php"><span>Logout</span></a></li>
+                </ul>
+                
+                <div id="content1">
+               
+                </div>
+                <div id="content2">
+
+                </div>
+                <div id="content3">
+
+                </div>
+                      <div id="content4">
+
+                </div>
+
+                <div>
+
+                </div>   
+            </div>
+        </div>
+    </body>
+</html>

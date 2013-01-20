@@ -1,0 +1,284 @@
+<?PHP
+session_start();
+if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
+header ("Location: index.php");
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="css/jqx.base.css" type="text/css" />
+        <script type="text/javascript" src="js/gettheme.js"></script>
+        <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script> 
+        <script type="text/javascript" src="js/jqxcore.js"></script>
+        <script type="text/javascript" src="js/jqxbuttons.js"></script>
+        <script type="text/javascript" src="js/jqxscrollbar.js"></script>
+        <script type="text/javascript" src="js/jqxdata.js"></script>
+        <script type="text/javascript" src="js/jqxlistbox.js"></script>
+        <script type="text/javascript" src="js/jqxdropdownlist.js"></script>	
+        <script type="text/javascript" src="js/jqxpanel.js"></script>
+        <script type="text/javascript" src="js/jquery.jeditable.js"></script>
+        <script type="text/javascript" src="js/jqxslider.js"></script>
+        <script type="text/javascript" src="js/jqxdocking.js"></script>
+        <script type="text/javascript" src="js/jqxsplitter.js"></script>
+        <script type="text/javascript" src="js/jqxwindow.js"></script>
+        <script type="text/javascript" src="js/jqxcheckbox.js"></script>
+        <script type="text/javascript" src="js/jqxscrollview.js"></script>
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+      
+                // prepare the data
+                var source =
+                    {
+                    datatype: "json",
+                    datafields: [
+                        { name: 'plantnumber'},
+                        { name: 'preset'},
+                        { name: 'minval'},
+                        { name: 'maxval'},
+                        { name: 'plantname'},
+                        { name: 'pump'},
+                        { name: 'wlevel'}
+                    ],
+                    url: 'data_tab_2.php'
+                };
+            
+                var dataAdapter = new $.jqx.dataAdapter(source, {
+                    loadComplete: function () {
+                        // get data records.
+                        records = dataAdapter.records;
+                        // get length, amount of plants/probes, for for loop
+                        var length = records.length;
+                        var theme = getTheme();          
+                        //drop down list elements
+                        var sourceDropDown = [
+                            { html: "<div style='height: 90px; float: left;'><img style='float: left; margin-top: 2px; margin-right: 5px;' src='images/cactus.png'/><span style='float: left; font-size: 13px; font-family: Verdana Arial;'>Dry Soil</span></div>", title: 'Dry Soil' },
+                            { html: "<div style='height: 90px; float: left;'><img style='float: left; margin-top: 2px; margin-right: 5px;' src='images/alocasia.png'/><span style='float: left; font-size: 13px; font-family: Verdana Arial;'>Moderately Wet Soil</span></div>", title: 'Moderately Wet Soil' },
+                            { html: "<div style='height: 90px; float: left;'><img style='float: left; margin-top: 2px; margin-right: 5px;' src='images/coleus.png'/><span style='float: left; font-size: 13px; font-family: Verdana Arial;'>Wet Soil</span></div>", title: 'Wet Soil' },
+                            { html: "<div style='height: 90px; float: left;'><img style='float: left; margin-top: 2px; margin-right: 5px;' src='images/custom.png'/><span style='float: left; font-size: 13px; font-family: Verdana Arial;'>Custom</span></div>", title: 'Custom' },
+                        ];
+
+                        //dropdown list event handler function
+                        function dropDownHandler(i){
+                        
+                            $('#dropDown'+[i]).bind('select', function (event) {
+                            
+                                var args = event.args;
+                                if (args) {
+                                    var selectedIndex = args.index;
+                                    var plantnumber = 1+i;
+                                }      
+                                if (selectedIndex ==0){
+                                    $('#plantSlider'+[i]).jqxSlider('setValue', [5, 35]);
+                                    $.post("changeplantsettings.php", { minval: "5", maxval: "35", val: "0", plantnumber: plantnumber } );                       
+                                }
+                                if (selectedIndex ==1){ 
+                                    $('#plantSlider'+[i]).jqxSlider('setValue', [35, 65]);
+                                    $.post("changeplantsettings.php", { minval: "35", maxval: "65", val: "1", plantnumber: plantnumber } );                        
+                                }
+                                if (selectedIndex ==2){  
+                                    $('#plantSlider'+[i]).jqxSlider('setValue', [65, 95]);
+                                    $.post("changeplantsettings.php", { minval: "65", maxval: "95", val: "2", plantnumber: plantnumber } );                       
+                                }            
+                            });  
+                        };
+                        
+                        //function for slider events
+                        function sliderHandler(i){
+                            $('#plantSlider'+[i]).bind('slideEnd', function (event) {
+                                var minval = event.args.value.rangeStart;
+                                var maxval = event.args.value.rangeEnd;
+                                var plantnumber = 1+i;
+                                $.post("changeplantsettings.php", { minval: minval, maxval: maxval, val: "3", plantnumber: plantnumber  });
+                                $('#dropDown'+[i]).jqxDropDownList('selectIndex', 3); 
+                            });
+                        }
+                        
+                        //function for checkbox handler
+                        function checkedHandler(i){
+                            $("#pump"+[i]).bind('change', function (event) {
+                                var plantnumber = 1+i; 
+                                var checked = $("#pump"+[i]).jqxCheckBox('checked');
+                                if (checked) {
+                                    $.post("changeplantsettings.php", { val: "6", plantnumber: plantnumber, pump: "1" });
+                                } else {
+                                    $.post("changeplantsettings.php", { val: "6", plantnumber: plantnumber, pump: "0" });
+                                }                
+                            }
+                        )};
+                                   
+                        //get theme used (default)
+                        var theme = getTheme();
+                      
+                      
+                      // append dockings to scrollview divs
+                        $('<div id="docking"></div>').appendTo('#scrollView1'); 
+                        $('<div id="docking2"></div>').appendTo('#scrollView1'); 
+                        $('<div id="docking3"></div>').appendTo('#scrollView2');
+                        $('<div id="docking4"></div>').appendTo('#scrollView2');
+                        //create docking and adjust size according to window amount, this is hax, FIXXXX?
+                        function createDocking(wmount){
+                            if (wmount <= 3){
+                                var wfinal = 212.5*wmount;
+                            }
+                            else
+                            {wfinal = 850}
+                            $('#docking').jqxDocking({ theme: theme, width: wfinal, mode: 'docked' });                                                     
+                            if (wmount >= 4)
+                            {
+                                if (wmount <=8){
+                                    var wfinal2 = 212.5*(wmount-4);  
+                                }
+                                else
+                                {wfinal2 = 850}
+                                $('#docking2').jqxDocking({ theme: theme, width: wfinal2, mode: 'docked'});   
+                            }  
+                            if (wmount >= 8)
+                            {
+                                if (wmount <= 12){
+                                    var wfinal3 = 212.5*(wmount-8);
+                                }
+                                else
+                                {wfinal3 = 850}
+                                $('#docking3').jqxDocking({ theme: theme, width: wfinal3, mode: 'docked'});
+                            }  
+                            if (wmount >= 12)
+                            {
+                                var wfinal4 = 212.5*(wmount-12);   
+                                $('#docking4').jqxDocking({ theme: theme, width: wfinal4, mode: 'docked'});             
+                            }    
+                        }
+                        
+                        //Create different elements, basically big nasty for loop. There has to be nicer way to do this...
+                        function createElements(){      
+                            // loop through the records.
+                            for (var i = 0; i < length; i++) { 
+                                addPlant(i);
+                            }
+                            function addPlant(i){
+                                //needed variables from json call
+                                var preset =records[i].preset;
+                                var PlantName=records[i].plantname;
+                                var minVal=records[i].minval;
+                                var maxVal=records[i].maxval;
+                                var pump=records[i].pump;
+                                var checked;
+                                // indexes for dynamically created elements
+                                var nameDropdown = "#dropDown"+[i];
+                                var nameWindow = "#window"+[i];
+                                var divdock = "#divdock"+[i];
+                                var nameWindowContent = "#windowContent" + [i];
+                                var namePanel ="#panel"+[i];
+                                var namePlantname = "#plantName"+[i];
+                                var nameSlider = "#plantSlider"+[i];
+                                var namePump = "#pump"+[i];
+                                var pNum=i+1; //pnum so that numbering starts from 1
+                                //for some reason had to do it this way for checkbox default value
+                                if (pump==0)
+                                {checked=false}
+                                else if (pump==1){
+                                    checked=true
+                                }  
+                                // Create divdocks that are appended to docking elements and then append all other crap to them.
+                                if (i <= 3){
+                                    $('<div>', {id:"divdock" +i } ).appendTo('#docking');
+                                }
+                                if (i >= 4 && i <= 7)
+                                {
+                                    $('<div>', {id:"divdock"+i } ).appendTo('#docking2');
+                                }
+                                if (i >= 8 && i <= 11)
+                                {
+                                    $('<div>', {id:"divdock"+i } ).appendTo('#docking3');
+                                }
+                                if (i >= 12 && i <= 15)
+                                {
+                                    $('<div>', {id:"divdock"+i } ).appendTo('#docking4');
+                                }
+                                $('<div id="window' + i +'"></div>').appendTo(divdock);      
+                                $('<div id="windowHeader' + i + '"><span>Plant '+pNum+'</span></div>', {id:"windowHeader"+i } ).appendTo(nameWindow);                                               
+                                $('<div style="overflow: hidden;" id="windowContent' + i + '"></div>', {id:"windowContent"+i } ).appendTo(nameWindow);
+                                $('<div>', {id:"panel"+i } ).appendTo(nameWindowContent); 
+                                $(namePanel).jqxPanel({ width: 200, height: 220 } );           
+                                $('<h3 id="plantName' + i + '">' + PlantName + '</h3>', {id:"plantName"+i } ).appendTo('body');         
+                                $(namePlantname).editable('saveplantname.php');
+                                $('<div id="pump' + i +'">Use pump</div>').appendTo('body');
+                                $('<div>', {id:"dropDown"+i } ).appendTo('body');
+                                $('<div>', {id:"plantSlider"+i } ).appendTo('body');                  
+                                //append dynamic elements to created panels                              
+                                $(namePanel).jqxPanel('append', $(namePlantname));
+                                $(namePanel).jqxPanel('append', $(namePump));
+                                $(namePanel).jqxPanel('append', $(nameDropdown));
+                                $(namePanel).jqxPanel('append', $(nameSlider));
+                                $(namePump).jqxCheckBox({ width: 200, theme: theme, checked: checked});
+                                checkedHandler(i);
+                                //create dropdown element
+                                $(nameDropdown).jqxDropDownList({ source: sourceDropDown, autoDropDownHeight: true, selectedIndex: preset, width: '190px', height: '100px', theme: theme });
+                                //call for dropdown event handler
+                                dropDownHandler(i);
+                                //create slider element
+                                $(nameSlider).jqxSlider({showButtons: true, buttonsPosition: 'both', theme: theme, height: 30, min: 0, max: 95, step: 5, ticksFrequency: 10, mode: 'fixed', values: [minVal, maxVal], rangeSlider: true, width: 180 });
+                                //call slider event handler
+                                sliderHandler(i);
+                            };
+                        };
+                        //create elements
+                        createElements();
+                        //after everything else, create docking
+                        createDocking(length);                
+                        //set default functionality for created docking windows
+                        for (var i = 0; i < length; i++) { 
+                            if (i <= 3){
+                                $('#docking').jqxDocking('setWindowProperty', 'window'+[i], 'width', 202);
+                                $('#docking').jqxDocking('pinWindow', 'window'+[i]);
+                                $('#docking').jqxDocking('disableWindowResize', 'window'+[i]);
+                                $('#docking').jqxDocking('hideCloseButton', 'window'+[i]);
+                            }
+                            
+                            if (i >= 4 && i <= 7)
+                            {
+                                $('#docking2').jqxDocking('setWindowProperty', 'window'+[i], 'width', 202);
+                                $('#docking2').jqxDocking('pinWindow', 'window'+[i]);
+                                $('#docking2').jqxDocking('disableWindowResize', 'window'+[i]);
+                                $('#docking2').jqxDocking('hideCloseButton', 'window'+[i]);
+                                
+                            }
+                            if (i >= 7 && i <= 11)
+                            {
+                                $('#docking3').jqxDocking('setWindowProperty', 'window'+[i], 'width', 202);
+                                $('#docking3').jqxDocking('pinWindow', 'window'+[i]);
+                                $('#docking3').jqxDocking('disableWindowResize', 'window'+[i]);                         
+                                $('#docking3').jqxDocking('hideCloseButton', 'window'+[i]);
+                                
+                            }
+                            if (i >= 12 && i <= 15)
+                            {
+                                $('#docking4').jqxDocking('setWindowProperty', 'window'+[i], 'width', 202);
+                                $('#docking4').jqxDocking('pinWindow', 'window'+[i]);
+                                $('#docking4').jqxDocking('disableWindowResize', 'window'+[i]);
+                                $('#docking4').jqxDocking('hideCloseButton', 'window'+[i]);                               
+                            }
+                        }                      
+                        $('#scrollView').jqxScrollView({ width: 840, height: 580, theme: theme });
+                    }                 
+                });
+                dataAdapter.dataBind(); 
+            });    
+            
+        </script>
+    </head>
+    <body class='default'>
+        <div id='jqxWidget'>
+            <div id="content2">
+                <div id="scrollView" >
+                    <div id="scrollView1"></div>
+                    <div id="scrollView2"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

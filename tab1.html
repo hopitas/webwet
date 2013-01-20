@@ -1,0 +1,141 @@
+<?PHP
+session_start();
+if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
+header ("Location: index.php");
+}
+?>
+
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Moisture value</title>
+        <link rel="stylesheet" href="css/jqx.base.css" type="text/css" />
+        <script src="js/highstock.js"></script>
+
+        <!-- creating the chart -->
+        <script type="text/javascript">
+            
+            $(function() {
+
+                var seriesOptions = [],
+                colors = Highcharts.getOptions().colors;
+
+                $.getJSON('data_tab_1.php',	function(data) {
+
+                    $.each(data, function(i, value) {
+
+                        seriesOptions[i] = {
+                            type: value.type,
+                            name: value.name,
+                            tooltip: value.tooltip, 
+                            data: value.data,
+                            yAxis: value.yaxis
+                        };
+		
+                        createChart();
+
+                    });
+                });
+
+                // create the chart when all data is loaded
+                function createChart() {
+
+                    chart = new Highcharts.StockChart({
+                        chart : {
+                            renderTo : 'contentchart'
+                           // marginRight: 120 // make room for the legend
+                        },
+                        legend: {
+                            enabled: true,
+                            align: 'right',
+                            layout: 'vertical',
+                            verticalAlign: 'top',
+                            y: 60
+                        },
+                        rangeSelector: {
+                            selected: 2,
+                            inputBoxStyle: {
+                                top: '40px',
+                                right: '10px'
+                            },
+                            buttons: [{
+                                    type: 'day',
+                                    count: 1,
+                                    text: '1d'
+                                },
+                                {
+                                    type: 'week',
+                                    count: 1,
+                                    text: '1w'
+                                },
+                                {
+                                    type: 'month',
+                                    count: 1,
+                                    text: '1m'
+                                },
+                                {
+                                    type: 'all',
+                                    text: 'All'
+                                }]
+                        },
+
+                        title : {
+                            text : 'Plant watering'
+                        },
+
+                        yAxis: [{
+                                title: {
+                                    text: 'Moisture Value [%]'
+                                },
+                                height: 200,
+                                lineWidth: 2
+                            }, {
+                                title: {
+                                    text: 'Watered [times]'
+                                },
+                                top: 300,
+                                height: 100,
+                                offset: 0,
+                                lineWidth: 2
+                            }],
+                        series: seriesOptions
+                    });
+                }
+
+            });
+            
+            $(function() {
+ 
+                getStatus();
+ 
+            });
+   
+            // function for water level alert, updated periodically from DB.
+            function getStatus() {
+                $.getJSON('data_wlevel.php', function(data){
+                    var waterval = data[0].waterval;
+                    var theme = getTheme();
+                    if (waterval == 0){
+                        document.getElementById('Waterlevel').src="images/NoAlert.gif";
+                        $("b").html("");
+                    }
+                    else{
+                        document.getElementById('Waterlevel').src="images/Alert.gif";
+                        $("b").html("<b>Water container empty!</b>");
+                    }  
+                });
+                setTimeout("getStatus()",100000);
+            };
+            
+        </script>
+
+    </head>
+    <body style="font-size:80%;">
+        <img src="" id="Waterlevel" width="20" height="20" alt="" style="border: none;"/>
+        <b></b>
+        <div id="contentchart" style="height: 530px; min-width: 500px">
+        </div>
+    </body>
+
+</html>
