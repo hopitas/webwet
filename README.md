@@ -13,7 +13,7 @@ esperanza.glass@gmail.com
 
 IRC channel available on Freenode:
 
-#webwet
+channel #webwet
 
 LICENSING:
 
@@ -60,7 +60,7 @@ password:
 
 In tab3 can be used to show web camera. I've used zoneminder (because it is really nice and free surveillance software ^^) and show the stream with:
 
-<img src="http://YOUR.URL/cgi-bin/nph-zms?mode=jpeg&monitor=3&scale=100&maxfps=15&buffer=1000&user=USERNAME&pass=PASSWORD&connkey=914020&rand=1355500785" alt="Edit source in tab3.html to add camera if you got one.">
+<img src="http://YOUR.URL/cgi-bin/nph-zms?mode=jpeg&monitor=3&scale=100&maxfps=15&buffer=1000&user=USERNAME&pass=PASSWORD&connkey=914020&rand=1355500785" alt="Edit source in tab3.html to add camera if you got one.
 
 
 It could be something fancier, I know...
