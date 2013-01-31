@@ -98,7 +98,12 @@ Use irrigation_eth_multiprobe arduino software
 2)
 
 Use irrigation_serial_multiprobe arduino software
-You need to setup python_serial_script to be running as daemon in server. It takes care of communicating between arduino 
+You need to setup python_serial_script to be running as daemon in server. I used this tutorial to do it:
+
+http://jimmyg.org/blog/2010/python-daemon-init-script.html
+
+
+It takes care of communicating between arduino 
 serial and php. Check that serial bus is correct one and that you got needed python libraries installed:
 
 import serial
