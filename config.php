@@ -1,9 +1,10 @@
 <?PHP
-session_start();
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
-header ("Location: index.php");
-}
-
+//session_start();
+//if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
+//header ("Location: index.php");
+//}
+//default timezone
+date_default_timezone_set('Europe/Helsinki');
 // Connection's Parameters
 $db_host = "localhost";
 $db_name = "arduino";
