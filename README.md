@@ -53,7 +53,11 @@ INSTALLATION:
 
 Software NEEDS to be in webwet folder at your root www dir, because that's where arduino is trying to look for it!
 
-Web software needs basic LAMP installation. Database arduino.sql needs to be imported to mysql.
+Web software needs basic LAMP installation. Database arduino.sql needs to be imported to mysql. Raspberry pi need arduino package
+to be able to use arduinos serial interface. I had to reboot the rpi to get  the connection working (probably loaded some
+modules during reboot).
+
+Python script needs python-serial library.
 
 Default username: admin
 password:
