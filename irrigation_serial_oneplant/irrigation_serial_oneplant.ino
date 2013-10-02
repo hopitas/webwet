@@ -3,14 +3,12 @@
 int maxPlants=2; // maximum amount of plants, needed when initializing variables
 int moistSensor[] = {
   A0};    // soil moisture sensor
-int waterLevel[] = {
-  2}; // waterlevel sensor pin
 int vent[] = {
   3};      // valve pin
 int moistV[]= {
   4}; // moist sensor V pin, moist sensor voltage is turned on, then measured, then off to save the metal surface of the sensor
 int pumpPin=5;  //pump pin
-int waterPin=6; //water lvl pin
+int waterPin=2; //water lvl pin
 int waterVal=0; // reservoir water level value
 
 // does it need to be 16 or 17????
@@ -40,7 +38,7 @@ void setup(){
   for (int i = 0; i < plantAmount; i++)
   {
     moisture_val[i] = moistureVal(i); // initial moisture value reading
-    sensor_val[i] = digitalRead(waterLevel[i]); // check that there is no flood 
+    sensor_val[i] = HIGH; // check that there is no flood 
     io(1,i);
   }
 }
@@ -77,7 +75,7 @@ void irrigation(int plantNum)
     //digitalWrite(vent[plantNum], LOW);
     //delay(3000);                 // wait 3s
     moisture_val[plantNum] = moistureVal(plantNum); // read moisture value
-    sensor_val[plantNum] = digitalRead(waterLevel[plantNum]); // read value from water level diode
+    sensor_val[plantNum] = HIGH; // read value from water level diode
   }
   digitalWrite(pumpPin, LOW);
   digitalWrite(vent[plantNum], LOW);
@@ -95,7 +93,7 @@ void recycle()
   delay(21600000);  // 1000ms*60*60*6=21600000=6h this is how often moisture val is measured during recycle, is there need to be able to define it to some other val? 
   for (int i = 0; i < plantAmount; i++){
     moisture_val[i] = moistureVal(i); // read moisture sensor value
-    sensor_val[i] = digitalRead(waterLevel[i]);  
+    sensor_val[i] = HIGH;  
     io(1, i);
   }
   io(0,0); // read dry and wet values, will it be strange to user if it takes max 6h to take effect?
@@ -235,7 +233,6 @@ void zeroVal() // zero all variables
     pinMode(moistSensor[i], INPUT);  // moist sensor input
     pinMode(vent[i], OUTPUT);     // valve output
     pinMode(moistV[i], OUTPUT);   // moist sensor Vdd as output
-    pinMode(waterLevel[i], INPUT); // waterlevel input
     moisture_val[i]=0; // put everything to zero
     watered[i]=0;
     sensor_val[i]=0;
