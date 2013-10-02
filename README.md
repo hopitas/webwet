@@ -19,7 +19,7 @@ LICENSING:
 
 
 USE THIS SOFTWARE AT YOUR OWN RISK. I don't take any responsibility of the possible harm it may cause,
-including all the flood it may cause in your apartment or wherever.
+including flooding your apartment or whatever else.
 
 Code I have written is licensed under GPLv3. License file included in gpl-3.0.txt
 
