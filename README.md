@@ -53,16 +53,18 @@ INSTALLATION:
 
 Software NEEDS to be in webwet folder at your root www dir, because that's where arduino is trying to look for it!
 
-Web software needs basic LAMP installation. Database arduino.sql needs to be imported to mysql. Raspberry pi need arduino package
-to be able to use arduinos serial interface. I had to reboot the rpi to get  the connection working (probably loaded some
-modules during reboot).
+Web software needs basic LAMP installation. Database arduino.sql needs to be imported to mysql. Raspberry pi needs arduino
+package to be able to use arduinos serial interface. I had to reboot the rpi to get  the connection working 
+(probably loaded some modules during reboot). After this you should be able to see the device at /dev/tty* when arduino
+is connected to RPi.
 
 Python script needs python-serial library.
 
-Default username: admin
+Web interface defaults:
+username: admin
 password:
 
-In tab3 can be used to show web camera. I've used zoneminder (because it is really nice and free surveillance software ^^) and show the stream with:
+Tab3 can be used to show web camera. I've used zoneminder (because it is really nice and free surveillance software ^^) and show the stream with:
 
 <img src="http://YOUR.URL/cgi-bin/nph-zms?mode=jpeg&monitor=3&scale=100&maxfps=15&buffer=1000&user=USERNAME&pass=PASSWORD&connkey=914020&rand=1355500785" alt="Edit source in tab3.html to add camera if you got one.
 
