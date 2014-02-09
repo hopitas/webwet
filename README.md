@@ -116,6 +116,9 @@ import serial
 import httplib
 import urllib
 
+If you can't find arduino from Rpi, try this: Run rpi-update as root and reboot.
+
+
 Have fun, fix my code please and ask questions via email, irc or website
 
 thx, hopey ;)
