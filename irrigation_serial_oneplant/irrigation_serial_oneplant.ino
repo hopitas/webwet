@@ -112,8 +112,9 @@ void readWaterLvL()
       waterEmpty=1;
       io(2,0);
       delay(5000);                 // wait 5s
-
-    }
+    } 
+    waterEmpty=0;
+    io(2,0);
   }
   else
   {
