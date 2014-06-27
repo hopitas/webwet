@@ -19,7 +19,7 @@ int sensor_val[16];    // water level sensor pin
 int wetValue[16]; // how wet we want the plant to go, this value is got from the server
 int dryValue[16]; // how dry plant gets, got from server
 int watered[16]; // we measure the amount of watering cycles
-int pump[2]; // water pump, if we have one
+int pump[16]; // water pump, if we have one
 int serialdata = 0; // for reading serial data
 int plantAmount=0; // real amount of plants, got from server
 int waterSensor=0; // is reservoir water level sensor in use

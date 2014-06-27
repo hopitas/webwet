@@ -53,18 +53,33 @@ while var == 1 :  # This constructs an infinite loop
     	       httpServ.request('GET', f.geturl())
     	       httpServ.close()
             elif var2 in ['*read*']:
-    	       #Connect to server
-    	       httpServ = \
-    	       httplib.HTTPConnection("127.0.0.1", 80)
-    	       httpServ.connect()
-    	       #Send Get html request
-    	       httpServ.request('GET', "/webwet/getvalsarduino.php")
-    	       #Wait for response
-    	       response = httpServ.getresponse()
-    	       vastaus = (response.read())
-    	       ser.write(vastaus)
-	       print vastaus
-	       httpServ.close()
+               #Connect to server
+               httpServ = \
+               httplib.HTTPConnection("127.0.0.1", 80)
+               httpServ.connect()
+               #Send Get html request
+               httpServ.request('GET', "/webwet/getvalsarduino.php")
+               #Wait for response
+               response = httpServ.getresponse()
+               vastaus = (response.read())
+               plantamount = vastaus[:1]
+              # ser.write(vastaus)
+              # print vastaus
+               lvastaus = vastaus.split("/")
+               plantamount = int(lvastaus[0])
+               settings = "/".join(lvastaus[:2])+"/"
+               dryvalues = "/".join(lvastaus[2:plantamount+2])+"/"
+               wetvalues = "/".join(lvastaus[plantamount+2:2*plantamount+2])+"/"
+               pump = "/".join(lvastaus[2*plantamount+2:3*plantamount+2])+"/"
+               ser.write(settings)
+               print settings
+               ser.write(dryvalues)
+               print dryvalues
+               ser.write(wetvalues)
+               print wetvalues
+               ser.write(pump)
+               print pump
+               httpServ.close()
             elif var2 in ['*nowater*']:
     	       waterempty=ser.readline().rstrip()
     	       print("Is water reservoir empty:")
