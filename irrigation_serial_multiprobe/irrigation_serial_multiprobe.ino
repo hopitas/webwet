@@ -62,7 +62,7 @@ void loop()
 
 void irrigation(int plantNum)
 {
-  while (moisture_val[plantNum] < wetValue[plantNum] && watered[plantNum] < 500 && sensor_val[plantNum] == HIGH) // water until moisture bigger than wetValue, max irrigation 500 so there is some max limit, time max~40min, check also waterlevel
+  while (moisture_val[plantNum] < wetValue[plantNum] && watered[plantNum] < 50 && sensor_val[plantNum] == HIGH) // water until moisture bigger than wetValue, max irrigation 500 so there is some max limit, time max~40min, check also waterlevel
   {
     readWaterLvL();  // read waterlevel from container
     io(0,0); // we get dry value and wet value from database, if someone wants to change them during watering...
