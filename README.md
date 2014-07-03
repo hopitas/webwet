@@ -105,6 +105,14 @@ Use irrigation_eth_multiprobe arduino software
 
 Use irrigation_serial_multiprobe arduino software
 
+When you compile and upload the software to arduino and have more than 8 plants, you need to modify the arduino serial buffer size from 64 -> 256 to be able to get readings from all plants.
+I found a guide to do that from:
+
+http://www.hobbytronics.co.uk/arduino-serial-buffer-size
+
+Would be nice idea to make the serial communication more sophisticated, but hey, it works for me :P
+
+
 Installing arduino to linux apt-get install arduino arduino-core arduino-mk
 
 You need to setup python_serial_script to be running as daemon in server. I used this tutorial to do it:

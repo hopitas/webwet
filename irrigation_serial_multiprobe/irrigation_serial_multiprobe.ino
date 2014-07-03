@@ -169,7 +169,7 @@ void readData()
   delay(3000);
   if(Serial.available())
   {
-    plantAmount=getSerial(); // amount of plants before dry/wet vals
+         plantAmount=getSerial(); // amount of plants before dry/wet vals
     waterSensor=getSerial(); // do we use water level sensor in container
     while(Serial.available()) // dry/wet values + do we use pump for every plant
     {
