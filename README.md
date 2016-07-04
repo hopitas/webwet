@@ -5,15 +5,11 @@ CONTACT INFORMATION:
 
 Project home page:
 
-http://arpi.valtio.org/2013/01/20/webwet/
+http://projects.valtio.org/2013/01/20/webwet/
 
 My email:
 
 esperanza.glass@gmail.com
-
-IRC channel available on Freenode:
-
-channel #webwet
 
 LICENSING:
 
@@ -129,6 +125,6 @@ import urllib
 If you can't find arduino from Rpi, try this: Run rpi-update as root and reboot.
 
 
-Have fun, fix my code please and ask questions via email, irc or website
+Have fun, fix my code please and ask questions via email
 
 thx, hopey ;)
