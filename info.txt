@@ -2,15 +2,11 @@ CONTACT INFORMATION:
 
 Project home page:
 
-http://arpi.valtio.org/2013/01/20/webwet/
+http://projects.valtio.org/2013/01/20/webwet/
 
 My email:
 
 esperanza.glass@gmail.com
-
-IRC channel available on Freenode:
-
-#webwet
 
 LICENSING:
 
@@ -102,6 +98,6 @@ import serial
 import httplib
 import urllib
 
-Have fun, fix my code please and ask questions via email, irc or website
+Have fun, fix my code please and ask questions via email
 
 thx, hopey ;)

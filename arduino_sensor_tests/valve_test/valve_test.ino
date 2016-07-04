@@ -1,6 +1,6 @@
 /* Antaa pinniin 13 jännitteen jaksollisesti */
 
-int vent = 4; // valve pin
+int vent = 17; // valve pin
 
 // setup routine:
 void setup() {                

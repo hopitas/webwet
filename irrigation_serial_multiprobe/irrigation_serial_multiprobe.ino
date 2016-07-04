@@ -92,7 +92,7 @@ void recycle()
     digitalWrite(vent[i], LOW);    // valve off
     watered[i]=0; // zero watered...  
   }
-  delay(21600000);  // 1000ms*60*60*6=21600000=6h this is how often moisture val is measured during recycle, is there need to be able to define it to some other val? 
+  delay(3600000);  // Delay now 1h 1000ms*60*60*1=21600000=1h this is how often moisture val is measured during recycle, is there need to be able to define it to some other val? 
   for (int i = 0; i < plantAmount; i++){
     moisture_val[i] = moistureVal(i); // read moisture sensor value
     sensor_val[i] = digitalRead(waterLevel[i]);  
