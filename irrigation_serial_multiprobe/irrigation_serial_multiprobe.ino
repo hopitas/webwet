@@ -1,17 +1,21 @@
 #include <SPI.h>
 
-int maxPlants=16; // maximum amount of plants, needed when initializing variables
+int maxPlants = 16; // maximum amount of plants, needed when initializing variables
 int moistSensor[] = {
-  A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11,A12,A13,A14,A15};    // soil moisture sensor
+  A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15
+};    // soil moisture sensor
 int waterLevel[] = {
-  23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53}; // waterlevel sensor pin
+  23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53
+}; // waterlevel sensor pin
 int vent[] = {
-  9,8,7,6,5,4,3,2,17,16,15,14,13,12,11,10};      // valve pin
-int moistV[]= {
-  22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52}; // moist sensor V pin, moist sensor voltage is turned on, then measured, then off to save the metal surface of the sensor
-int pumpPin=18;  //pump pin
-int waterPin=19; //water lvl pin
-int waterVal=0; // reservoir water level value
+  9, 8, 7, 6, 5, 4, 3, 2, 17, 16, 15, 14, 13, 12, 11, 10
+};      // valve pin
+int moistV[] = {
+  22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52
+}; // moist sensor V pin, moist sensor voltage is turned on, then measured, then off to save the metal surface of the sensor
+int pumpPin = 18; //pump pin
+int waterPin = 19; //water lvl pin
+int waterVal = 0; // reservoir water level value
 
 // doesnt work with smaller value than 2, is it digit of number or what? I thought it was length of the array?
 int moisture_val[16]; // variable that saves moisture sensor value
@@ -21,27 +25,27 @@ int dryValue[16]; // how dry plant gets, got from server
 int watered[16]; // we measure the amount of watering cycles
 int pump[16]; // water pump, if we have one
 int serialdata = 0; // for reading serial data
-int plantAmount=0; // real amount of plants, got from server
-int waterSensor=0; // is reservoir water level sensor in use
-int waterEmpty=0; // if reservoir sensor in use, is it empty?
-int i=0;
+int plantAmount = 0; // real amount of plants, got from server
+int waterSensor = 0; // is reservoir water level sensor in use
+int waterEmpty = 0; // if reservoir sensor in use, is it empty?
+int i = 0;
 
 // setup
 
-void setup(){
+void setup() {
 
-  Serial.begin(9600); // start serial port: 
+  Serial.begin(9600); // start serial port:
   pinMode(pumpPin, OUTPUT);     // define pump as output
   pinMode(waterPin, INPUT); // waterlevel of vater container
   digitalWrite(pumpPin, LOW); // turn pump off
   zeroVal(); // put all vals to zero
-  io(0,0); // get dryValue, wetValue and amount of plants in database.
+  io(0, 0); // get dryValue, wetValue and amount of plants in database.
 
   for (int i = 0; i < plantAmount; i++)
   {
     moisture_val[i] = moistureVal(i); // initial moisture value reading
-    sensor_val[i] = digitalRead(waterLevel[i]); // check that there is no flood 
-    io(1,i);
+    sensor_val[i] = digitalRead(waterLevel[i]); // check that there is no flood
+    io(1, i);
   }
 }
 
@@ -49,8 +53,8 @@ void setup(){
 
 void loop()
 {
-  for (int i = 0; i < plantAmount; i++){
-    if (moisture_val[i] < dryValue[i]){ // moisture value smaller than dry value, go to irrigation loop
+  for (int i = 0; i < plantAmount; i++) {
+    if (moisture_val[i] < dryValue[i]) { // moisture value smaller than dry value, go to irrigation loop
       irrigation(i);
       io(1, i); // write data to database for plant i
     }
@@ -62,18 +66,18 @@ void loop()
 
 void irrigation(int plantNum)
 {
-  while (moisture_val[plantNum] < wetValue[plantNum] && watered[plantNum] < 50 && sensor_val[plantNum] == HIGH) // water until moisture bigger than wetValue, max irrigation 500 so there is some max limit, time max~40min, check also waterlevel
+  while (moisture_val[plantNum] < wetValue[plantNum] && watered[plantNum] < 10 && sensor_val[plantNum] == HIGH) // water until moisture bigger than wetValue, max irrigation 10 so there is some max limit, time max~40min, check also waterlevel
   {
     readWaterLvL();  // read waterlevel from container
-    io(0,0); // we get dry value and wet value from database, if someone wants to change them during watering...
+    io(0, 0); // we get dry value and wet value from database, if someone wants to change them during watering...
 
     digitalWrite(vent[plantNum], HIGH);    // open valve
-    if (pump[plantNum] == 1){        // if we use pump, turn it on  
+    if (pump[plantNum] == 1) {       // if we use pump, turn it on
       digitalWrite(pumpPin, HIGH);
     }
     delay(5000);                 // wait 2s
     //  digitalWrite(pumpPin, LOW);  // pump off
-    watered[plantNum]=watered[plantNum]+1;  // count watering times
+    watered[plantNum] = watered[plantNum] + 1; // count watering times
     //digitalWrite(vent[plantNum], LOW);
     //delay(3000);                 // wait 3s
     moisture_val[plantNum] = moistureVal(plantNum); // read moisture value
@@ -88,39 +92,39 @@ void irrigation(int plantNum)
 void recycle()
 {
   digitalWrite(pumpPin, LOW);  // pump off, just to make sure
-  for (int i = 0; i < plantAmount; i++){
+  for (int i = 0; i < plantAmount; i++) {
     digitalWrite(vent[i], LOW);    // valve off
-    watered[i]=0; // zero watered...  
+    watered[i] = 0; // zero watered...
   }
-  delay(3600000);  // Delay now 1h 1000ms*60*60*1=21600000=1h this is how often moisture val is measured during recycle, is there need to be able to define it to some other val? 
-  for (int i = 0; i < plantAmount; i++){
+  delay(3600000);  // Delay now 1h 1000ms*60*60*1=21600000=1h this is how often moisture val is measured during recycle, is there need to be able to define it to some other val?
+  for (int i = 0; i < plantAmount; i++) {
     moisture_val[i] = moistureVal(i); // read moisture sensor value
-    sensor_val[i] = digitalRead(waterLevel[i]);  
+    sensor_val[i] = digitalRead(waterLevel[i]);
     io(1, i);
   }
-  io(0,0); // read dry and wet values, will it be strange to user if it takes max 6h to take effect?
+  io(0, 0); // read dry and wet values, will it be strange to user if it takes max 6h to take effect?
 }
 
 // water level function for water container
 
 void readWaterLvL()
 {
-  if(waterSensor == true)
+  if (waterSensor == true)
   {
     waterVal = digitalRead(waterPin);
-    while(waterVal == HIGH)
+    if (waterVal == HIGH)
     {
       digitalWrite(pumpPin, LOW);
-      waterEmpty=1;
-      io(2,0);
-      delay(5000);                 // wait 5s
-
+      waterEmpty = 1;
+      io(2, 0);
     }
-  }
-  else
-  {
-    waterEmpty=0;
-    io(2,0);
+    while (waterVal == HIGH)
+    {
+      delay(5000);                 // wait 5s
+      waterVal = digitalRead(waterPin);
+    }
+    waterEmpty = 0;
+    io(2, 0);
   }
 }
 
@@ -150,11 +154,11 @@ void noWater()
 // function gives plant data to php script that writes it to mysql
 
 void writeData(int plantNum)
-{  
+{
   Serial.println("*write*");
   Serial.println(plantNum);
   Serial.println(moisture_val[plantNum]);
-  Serial.println(sensor_val[plantNum]);   
+  Serial.println(sensor_val[plantNum]);
   Serial.println(watered[plantNum]);
 }
 
@@ -162,28 +166,28 @@ void writeData(int plantNum)
 
 void readData()
 {
-  int i2=0;
-  int i3=0;
+  int i2 = 0;
+  int i3 = 0;
 
   Serial.println("*read*"); // read dry/wet value, amount of plants, do we use pump and do we have level sensor for the container
   delay(3000);
-  if(Serial.available())
+  if (Serial.available())
   {
-         plantAmount=getSerial(); // amount of plants before dry/wet vals
-    waterSensor=getSerial(); // do we use water level sensor in container
-    while(Serial.available()) // dry/wet values + do we use pump for every plant
+    plantAmount = getSerial(); // amount of plants before dry/wet vals
+    waterSensor = getSerial(); // do we use water level sensor in container
+    while (Serial.available()) // dry/wet values + do we use pump for every plant
     {
       for (int i = 0; i < plantAmount; i++)
       {
-        dryValue[i]=getSerial();
+        dryValue[i] = getSerial();
       }
       for (int i = 0; i < plantAmount; i++)
       {
-        wetValue[i]=getSerial();
+        wetValue[i] = getSerial();
       }
       for (int i = 0; i < plantAmount; i++)
       {
-        pump[i]=getSerial();
+        pump[i] = getSerial();
       }
     }
   }
@@ -207,7 +211,7 @@ int moistureVal(int z) // z=plant number
   {
     sval = sval + analogRead(moistSensor[z]);   // sensor on analog pin 'z'
   }
-  digitalWrite(moistV[z], LOW);  
+  digitalWrite(moistV[z], LOW);
   sval = sval / 5 / 10;    // average / 100 -> ~ percentage
   return sval;
 }
@@ -219,9 +223,9 @@ int getSerial()
   int serialdata = 0;
   while (inbyte != '/')
   {
-    inbyte = Serial.read(); 
+    inbyte = Serial.read();
     if (inbyte > 0 && inbyte != '/')
-    { 
+    {
       serialdata = serialdata * 10 + inbyte - '0';
     }
   }
@@ -236,14 +240,14 @@ void zeroVal() // zero all variables
     pinMode(vent[i], OUTPUT);     // valve output
     pinMode(moistV[i], OUTPUT);   // moist sensor Vdd as output
     pinMode(waterLevel[i], INPUT); // waterlevel input
-    moisture_val[i]=0; // put everything to zero
-    watered[i]=0;
-    sensor_val[i]=0;
-    pump[i]=0;
-    dryValue[i]=0;
-    wetValue[i]=0;
+    moisture_val[i] = 0; // put everything to zero
+    watered[i] = 0;
+    sensor_val[i] = 0;
+    pump[i] = 0;
+    dryValue[i] = 0;
+    wetValue[i] = 0;
 
-  } 
+  }
 }
 
 
